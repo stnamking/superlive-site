@@ -84,7 +84,7 @@ body.on .eq b{animation:eq .5s infinite alternate}.eq b:nth-child(2){animation-d
 <body>
 <main id="stage" aria-live="off" aria-label="SUPERLIVE work reel"></main>
 <header class="hud top"><button class="logo" id="home" type="button">SUPERLIVE</button><nav class="nav"><button type="button" id="bIdx">Index</button><button type="button" id="bCon">Contact</button></nav></header>
-<div class="hud bl"><button type="button" id="snd" aria-pressed="true"><i class="eq"><b></b><b></b><b></b></i><span>SOUND ON</span></button><span id="trk" style="min-height:44px;display:flex;align-items:center">MIX · SUBSTANCE</span><button type="button" id="pau" aria-pressed="false">PAUSE</button></div>
+<div class="hud bl"><button type="button" id="snd" aria-pressed="true"><i class="eq"><b></b><b></b><b></b></i><span>SOUND ON</span></button><span id="trk" hidden></span><button type="button" id="pau" aria-pressed="false">PAUSE</button></div>
 <div class="hud br" id="now"></div>
 <div class="play" id="playHint"></div><div class="hud snh" id="sndHint">TAP FOR SOUND</div>
 <div class="film" id="film" role="dialog" aria-modal="true" aria-label="Film"><span class="ttl" id="filmT"></span><button class="x" type="button" id="filmX">CLOSE ✕</button><div class="box" id="filmB"></div></div>
@@ -241,12 +241,12 @@ const MIX=[[2,'SUBSTANCE',['swell','heart']],[1,'·',[]],[8,'TECHNO',['kick','rb
 const MIXB=MIX.reduce((a,x)=>a+x[0],0);
 const secAt=bar=>{let b=bar%MIXB;for(const x of MIX){if(b<x[0])return x;b-=x[0]}return MIX[0]};
 let curSec='';
-const TR=[{f:(t,st,m)=>{const x=secAt(m>>4);x[2].forEach(k=>LY[k](t,st,m));if(st==0&&x[1]!==curSec){curSec=x[1];const lbl=x[1];setTimeout(()=>{TB.textContent='MIX · '+lbl},Math.max(0,(t-ac.currentTime)*1000))}}}];
+const TR=[{f:(t,st,m)=>{const x=secAt(m>>4);x[2].forEach(k=>LY[k](t,st,m));if(st==0&&x[1]!==curSec){curSec=x[1];const lbl=x[1];}}}];
 let tr=0;
-let mt=0,next=0;const sch=()=>{if(!on||!ac||ac.state!=='running')return;const T=TICK/1000;if(next<ac.currentTime)next=ac.currentTime+.05;while(next<ac.currentTime+.25){const st=mt%16;TR[tr].f(next,st,mt);vq.push(next);mt++;next+=T}};const vq=[];setInterval(sch,25);
+let mt=0,next=0;const sch=()=>{if(!on||!ac||ac.state!=='running')return;const T=TICK/1000;if(next<ac.currentTime)next=ac.currentTime+.05;while(next<ac.currentTime+.5){const st=mt%16;TR[tr].f(next,st,mt);vq.push(next);mt++;next+=T}};const vq=[];setInterval(sch,25);
 const step=()=>{tk++;left--;if(left<=0){const nx=R[(pos+1)%R.length];if(nx.t=='i'&&!ready.has(nx.n)){load(nx.n);left=1;return}show(pos+1)}};
 /* visuals ride the music: when sound runs, each cut fires on the audio clock's 16th; otherwise on the frame clock */
-const loop=now=>{const synced=on&&ac&&ac.state==='running';
+const loop=now=>{sch();const synced=on&&ac&&ac.state==='running';
  if(synced){const lat=(ac.outputLatency||ac.baseLatency||0);let g=0;while(vq.length&&vq[0]<=ac.currentTime-lat&&g<4){vq.shift();if(!(paused||ov))step();g++}if(vq.length>32)vq.splice(0,vq.length-4);acc=0;last=now}
  else{vq.length=0;acc+=now-last;last=now;if(paused||ov)acc=0;let g=0;while(acc>=TICK&&g<4){acc-=TICK;step();g++}if(acc>TICK*4)acc=0}
  requestAnimationFrame(loop)};requestAnimationFrame(loop);
