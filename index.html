@@ -57,9 +57,9 @@ body.on .eq b{animation:eq .5s infinite alternate}.eq b:nth-child(2){animation-d
 .play{position:fixed;z-index:21;left:50%;bottom:30px;transform:translateX(-50%);mix-blend-mode:difference;color:#fff;font:700 12px var(--s);letter-spacing:.08em;pointer-events:none;opacity:.9}
 #stage a.go{position:absolute;inset:0;z-index:5;cursor:pointer}
 /* film popup */
-.film{position:fixed;inset:0;z-index:60;background:rgba(11,11,11,.94);display:none;place-items:center}
+.film{position:fixed;inset:0;z-index:60;background:rgba(11,11,11,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:none;place-items:center}
 .film.on{display:grid}
-.film .box{position:relative;width:min(92vw,calc(84vh*16/9));aspect-ratio:16/9;background:#000}
+.film .box{position:relative;width:min(80vw,calc(72vh*16/9));aspect-ratio:16/9;background:#000;box-shadow:0 30px 90px rgba(0,0,0,.7)}@media(max-width:700px){.film .box{width:94vw}}
 .film iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .film .x{position:fixed;top:14px;right:16px;font:700 13px var(--s);color:#fff;padding:12px;z-index:2}
 .film .ttl{position:fixed;left:24px;top:22px;font:700 13px var(--s);color:#fff;letter-spacing:.04em;text-transform:uppercase}
@@ -173,8 +173,7 @@ const silentWav=()=>{const sr=8000,n=sr/2,b=new ArrayBuffer(44+n*2),v=new DataVi
 const kickAudio=()=>{try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
  try{if(!silentEl){silentEl=new Audio(silentWav());silentEl.loop=true;silentEl.setAttribute('playsinline','');silentEl.volume=0.01}silentEl.play().catch(()=>{})}catch(e){}
  setSound(true);try{const b=ac.createBuffer(1,1,22050),src=ac.createBufferSource();src.buffer=b;src.connect(ac.destination);src.start(0)}catch(e){}};
-const unlock=e=>{if(live()&&silentEl){armed=false;return}const t=e.target;if(t&&t.closest&&t.closest('#snd'))return;const was=live();kickAudio();
- if(!was&&t&&t.closest){const g=t.closest('a.go');if(g){e.preventDefault&&e.type=='click'&&e.preventDefault();g.addEventListener('click',x=>x.preventDefault(),{once:true})}}};
+const unlock=e=>{if(live()&&silentEl){armed=false;return}const t=e.target;if(t&&t.closest&&t.closest('#snd'))return;kickAudio()};
 ['touchend','click','pointerdown','keydown'].forEach(ev=>addEventListener(ev,unlock,{capture:true}));
 /* the clock: 16th-note ticks */
 const BASS=[41.2,41.2,49,36.7];let tk=0,last=performance.now(),acc=0;
